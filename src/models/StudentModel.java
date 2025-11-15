@@ -28,11 +28,10 @@ public abstract class StudentModel {
         id = sc.nextLine();
         System.out.print("Enter full name: ");
         fullName = sc.nextLine();
-        System.out.print("Enter class: ");
         System.out.print("Enter address: ");
         address = sc.nextLine();
+        sc.nextLine();
         score.input();
-
 
         classModel.input(new Scanner(System.in));
 

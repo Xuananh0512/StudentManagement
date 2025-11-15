@@ -12,6 +12,7 @@ import models.ScoreModel;
 import models.SpecializedStudentModel;
 import models.StudentModel;
 import models.ClassroomModel;
+
 import java.io.BufferedReader;
 
 public class StudentList implements ILists {
@@ -101,27 +102,34 @@ public class StudentList implements ILists {
             }
 
             ScoreModel score;
-//            while (true) {
-            System.out.println("Nhap diem toan: ");
-            double math = sc.nextDouble();
-            System.out.println("Nhap diem ngu van : ");
-            double literature = sc.nextDouble();
-            System.out.println("Nhap diem anh van : ");
-            double english = sc.nextDouble();
-            sc.nextLine();
-            score = new ScoreModel(math, literature, english);
-//            }
+            while (true) {
 
+                System.out.println("Nhap diem toan:(0 <= D <= 10) ");
+                double math = sc.nextDouble();
+//
+
+                System.out.println("Nhap diem ngu van :(0 <= D <= 10) ");
+                double literature = sc.nextDouble();
+//
+
+                System.out.println("Nhap diem anh van :(0 <= D <= 10) ");
+                double english = sc.nextDouble();
+//
+                sc.nextLine();
+                score = new ScoreModel(math, literature, english);
+                break;
+            }
+//
             ClassroomModel classModel;
 //            while (true) {
-            System.out.println("Nhap id lop: ");
-            String classId = sc.nextLine();
-            System.out.println("Nhap ten lop: ");
-            String className = sc.nextLine();
-            System.out.println("Nhap ten giao vien chu nhiem: ");
-            String teacherId = sc.nextLine();
-            classModel = new ClassroomModel(classId, className, teacherId);
-//           }
+                System.out.println("Nhap id lop: ");
+                String classId = sc.nextLine();
+                System.out.println("Nhap ten lop: ");
+                String className = sc.nextLine();
+                System.out.println("Nhap ten giao vien chu nhiem: ");
+                String teacherId = sc.nextLine();
+                classModel = new ClassroomModel(classId, className, teacherId);
+//            }
 
             if (option == 1) {
                 String conduct;
@@ -170,7 +178,10 @@ public class StudentList implements ILists {
                 studentList.add(temp);
                 writeFile();
                 System.out.println("Them hoc sinh chuyen thanh cong!");
+                return;
+
             }
+
         }
     }
 
@@ -180,123 +191,185 @@ public class StudentList implements ILists {
     @Override
 
     public void update() {
+        while (true) {
+            System.out.print("Nhap ID can sua: ");
+            String id = sc.nextLine();
+            int index = searchById(id);
 
-        System.out.print("Nhap ID can sua: ");
-        String id = sc.nextLine();
-        int index = searchById(id);
+            if (index == -1) {
+                System.out.println("Khong tim thay hoc sinh!");
+                continue;
+            }
 
-        if (index == -1) {
-            System.out.println("Khong tim thay hoc sinh!");
+
+            StudentModel s = studentList.get(index);
+
+            if (s instanceof RegularStudentModel) {
+                System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Hanh kiem");
+                System.out.print("Chon muc can sua: ");
+                int opt = sc.nextInt();
+                sc.nextLine();
+
+
+                switch (opt) {
+                    case 1: {
+                        System.out.print("Nhap ten moi: ");
+                        s.setFullName(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 2: {
+                        System.out.print("Nhap dia chi moi: ");
+                        s.setAddress(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 3: {
+                        System.out.println("Nhap ten lop: ");
+                        s.getClassroomModel().setClassName(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 4: {
+                        System.out.print("Nhap giao vien moi: ");
+                        s.getClassroomModel().setTeacherId(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 5: {
+                        System.out.print("Nhap diem mon toan moi: ");
+                        s.getScore().setMath(sc.nextDouble());
+                        break;
+                    }
+
+                    case 6: {
+                        System.out.print("Nhap diem mon ngu van moi: ");
+                        s.getScore().setLiterature(sc.nextDouble());
+                        break;
+                    }
+
+                    case 7: {
+                        System.out.print("Nhap diem mon tieng anh moi: ");
+                        s.getScore().setEnglish(sc.nextDouble());
+                        break;
+                    }
+
+                    case 8: {
+                        System.out.print("Nhap hanh kiem moi: ");
+                        ((RegularStudentModel) s).setConduct(sc.nextLine().trim());
+                        break;
+                    }
+//                ....
+
+
+                    default: {
+                        System.out.println("Lua chon khong hop le!");
+                        return;
+                    }
+                }
+
+            } else if (s instanceof SpecializedStudentModel) {
+                System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Mon chuyen  9. Diem mon chuyen");
+                System.out.print("Chon muc can sua: ");
+                int opt = sc.nextInt();
+                sc.nextLine();
+                switch (opt) {
+                    case 1: {
+                        System.out.print("Nhap ten moi: ");
+                        s.setFullName(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 2: {
+                        System.out.print("Nhap dia chi moi: ");
+                        s.setAddress(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 3: {
+                        System.out.println("Nhap ten lop: ");
+                        s.getClassroomModel().setClassName(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 4: {
+                        System.out.print("Nhap giao vien moi: ");
+                        s.getClassroomModel().setTeacherId(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 5: {
+                        System.out.print("Nhap diem mon toan moi: ");
+                        s.getScore().setMath(sc.nextDouble());
+                        break;
+                    }
+
+                    case 6: {
+                        System.out.print("Nhap diem mon ngu van moi: ");
+                        s.getScore().setLiterature(sc.nextDouble());
+                        break;
+                    }
+
+                    case 7: {
+                        System.out.print("Nhap diem mon tieng anh moi: ");
+                        s.getScore().setEnglish(sc.nextDouble());
+                        break;
+                    }
+
+                    case 8: {
+                        System.out.print("Nhap mon chuyen: ");
+                        ((SpecializedStudentModel) s).setMajorSubject(sc.nextLine().trim());
+                        break;
+                    }
+
+                    case 9: {
+                        System.out.print("Nhap diem mon chuyen: ");
+                        ((SpecializedStudentModel) s).setMajorScore(sc.nextDouble());
+                        break;
+                    }
+
+//                ....
+                    default: {
+                        System.out.println("Lua chon khong hop le!");
+                        return;
+                    }
+                }
+            }
+            System.out.println("Cap nhat thanh cong!");
+            this.writeFile();
             return;
         }
-
-        StudentModel s = studentList.get(index);
-
-        if (s instanceof RegularStudentModel) {
-            System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Hanh kiem");
-            System.out.print("Chon muc can sua: ");
-            int opt = sc.nextInt();
-            sc.nextLine();
-
-
-            switch (opt) {
-                case 1: {
-                    System.out.print("Nhap ten moi: ");
-                    s.setFullName(sc.nextLine().trim());
-                    break;
-                }
-
-                case 2: {
-                    System.out.print("Nhap dia chi moi: ");
-                    s.setAddress(sc.nextLine().trim());
-                    break;
-                }
-
-                case 3: {
-                    System.out.print("Nhap hanh kiem moi: ");
-                    ((RegularStudentModel) s).setConduct(sc.nextLine().trim());
-                    break;
-                }
-
-                case 4: {
-                    System.out.print("Nhap giao vien moi: ");
-                    s.getClassroomModel().setTeacherId(sc.nextLine().trim());
-                    break;
-                }
-
-                case 5: {
-                    System.out.print("Nhap diem mon toan moi: ");
-                    s.getScore().setMath(sc.nextDouble());
-                    break;
-                }
-
-//                ....
-
-
-                default: {
-                    System.out.println("Lua chon khong hop le!");
-                    return;
-                }
-            }
-
-        } else if (s instanceof SpecializedStudentModel) {
-            System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Mon chuyen  9. Diem mon chuyen");
-            System.out.print("Chon muc can sua: ");
-            int opt = sc.nextInt();
-            sc.nextLine();
-            switch (opt) {
-                case 1: {
-                    System.out.print("Nhap ten moi: ");
-                    s.setFullName(sc.nextLine().trim());
-                }
-                case 2: {
-                    System.out.print("Nhap dia chi moi: ");
-                    s.setAddress(sc.nextLine().trim());
-                }
-                case 3: {
-                    System.out.print("Nhap mon chuyen moi: ");
-                    ((SpecializedStudentModel) s).setMajorSubject(sc.nextLine().trim());
-                }
-                case 4: {
-                    System.out.print("Nhap diem mon chuyen moi: ");
-                    double newScore = sc.nextDouble();
-                    sc.nextLine();
-                    ((SpecializedStudentModel) s).setMajorScore(newScore);
-                }
-//                ....
-                default: {
-                    System.out.println("Lua chon khong hop le!");
-                    return;
-                }
-            }
-        }
-        System.out.println("Cap nhat thanh cong!");
-        this.writeFile();
     }
 
     // ========================= REMOVE ============================
 
     @Override
     public void remove() {
-        System.out.print("Nhap ID can xoa: ");
-        String id = sc.nextLine();
-        int index = searchById(id);
+        while (true) {
+            System.out.print("Nhap ID can xoa: ");
+            String id = sc.nextLine();
+            int index = searchById(id);
 
-        if (index == -1) {
-            System.out.println("Khong tim thay hoc sinh!");
-            return;
-        }
+            if (index == -1) {
+                System.out.println("Khong tim thay hoc sinh!");
+                continue;
+            }
 
 
-        System.out.print("Xac nhan xoa (1: Co / 2: Khong): ");
-        int confirm = sc.nextInt();
-        sc.nextLine();
+            System.out.print("Xac nhan xoa (1: Co / 2: Khong): ");
+            int confirm = sc.nextInt();
+            sc.nextLine();
 
-        if (confirm == 1) {
-            studentList.remove(index);
-            System.out.println("Da xoa hoc sinh!");
-        } else {
-            System.out.println("Huy thao tac xoa.");
+            if (confirm == 1) {
+                studentList.remove(index);
+                System.out.println("Da xoa hoc sinh!");
+                this.readFile();
+                return;
+
+            } else {
+                System.out.println("Huy thao tac xoa.");
+                return;
+            }
         }
 
     }
@@ -307,15 +380,19 @@ public class StudentList implements ILists {
     @Override
 
     public void search() {
-        System.out.print("Nhap ID can tim: ");
-        String id = sc.nextLine();
-        int index = searchById(id);
+        while (true) {
+            System.out.print("Nhap ID can tim: ");
+            String id = sc.nextLine();
+            int index = searchById(id);
 
-        if (index == -1) {
-            System.out.println("Khong tim thay hoc sinh!");
-        } else {
-            System.out.println("Ket qua:");
-            studentList.get(index).display();
+            if (index == -1) {
+                System.out.println("Khong tim thay hoc sinh!");
+                continue;
+            } else {
+                System.out.println("Ket qua:");
+                studentList.get(index).display();
+                return;
+            }
         }
 
     }
@@ -327,13 +404,14 @@ public class StudentList implements ILists {
     public void println() {
         if (studentList.isEmpty()) {
             System.out.println("Danh sach rong!");
+            return;
         } else {
             System.out.println("Danh sach hoc sinh:");
             System.out.println(titleHeader);
             for (StudentModel s : studentList) {
                 s.display();
             }
-
+            return;
         }
 
     }
@@ -425,10 +503,12 @@ public class StudentList implements ILists {
     public static void main(String[] args) {
         StudentList list = new StudentList();
         list.readFile();
+//        list.add();
+//
+//        list.readFile();
+        list.println();
         list.add();
-//        list.println();
-
-//        list.update();
+        list.update();
 //        list.println();
 //        list.search();
 //        list.remove();

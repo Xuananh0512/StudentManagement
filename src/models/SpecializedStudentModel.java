@@ -34,7 +34,7 @@ public class SpecializedStudentModel extends StudentModel {
 
     @Override
     public String toString() {
-        return super.toString() + "null" + " | "+ majorSubject + " | " + majorScore;
+        return super.toString() +" | "+ "null" + " | "+ majorSubject + " | " + majorScore;
 
              
     }
