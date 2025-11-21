@@ -1,2 +1,10 @@
-123 | 222 | 22
-1233 | 1231323 | 12313231132
+C01 | Toán 10A | Nguyễn Văn A
+C02 | Văn 10B | Trần Thị B
+C03 | Lý 10C | Lê Văn C
+C04 | Hóa 10D | Phạm Thị D
+C05 | Sinh 10E | Hoàng Văn E
+C06 | Tin 10F | Đặng Thị F
+C07 | Sử 10G | Vũ Văn G
+C08 | Địa 10H | Nguyễn Thị H
+C09 | Anh 10I | Trần Văn I
+C10 | GDCD 10J | Lê Thị J

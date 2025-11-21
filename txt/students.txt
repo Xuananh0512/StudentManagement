@@ -1,1 +1,8 @@
-123 | sdssdsd | ssdsd | 123 | 123 | sdfsdfsdf | 1.0 | 1.0 | 1.0 | sdfsdfsd | null | null
+123 | Nguyễn Văn A | Hà Nội | C01 | Toán 10A | Nguyễn Thị H | 8.0 | 7.5 | 9.0 | Tốt | null | null
+124 | Trần Thị B | Hải Phòng | C02 | Văn 10B | Lê Văn G | 7.0 | 8.5 | 6.5 | Khá | null | null
+125 | Lê Văn C | Đà Nẵng | C03 | Lý 10C | Phạm Thị D | 6.5 | 7.0 | 8.0 | Trung bình | null | null
+126 | Phạm Thị D | Hồ Chí Minh | C04 | Hóa 10D | Hoàng Văn E | 9.0 | 8.5 | 9.5 | Tốt | null | null
+201 | Nguyễn Văn E | Hà Nội | C05 | Sinh 10E | Đặng Thị F | 8.5 | 7.0 | 8.0 | null | Sinh học | 9.0
+202 | Trần Văn F | Hải Phòng | C06 | Tin 10F | Vũ Văn G | 7.5 | 8.0 | 7.0 | null | Tin học | 8.5
+203 | Lê Thị G | Đà Nẵng | C07 | Sử 10G | Nguyễn Thị H | 8.0 | 8.0 | 7.5 | null | Lịch sử | 8.0
+204 | Hoàng Văn H | Hồ Chí Minh | C08 | Địa 10H | Trần Văn I | 7.0 | 6.5 | 7.5 | null | Địa lý | 7.5
