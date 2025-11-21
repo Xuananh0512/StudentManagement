@@ -1,3 +1,10 @@
-123|123|123
-11|22|11
-111|111|111
+T01 | Nguyễn Văn A | Toán
+T02 | Trần Thị B | Văn
+T03 | Lê Văn C | Lý
+T04 | Phạm Thị D | Hóa
+T05 | Hoàng Văn E | Sinh
+T06 | Đặng Thị F | Tin
+T07 | Vũ Thị G | Sử
+T08 | Nguyễn Thị H | Địa
+T09 | Trần Văn I | GDCD
+T10 | Lê Thị J | Anh

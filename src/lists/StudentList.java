@@ -1,27 +1,36 @@
+
+
+
 package lists;
 
+import interfaces.ILists;
+import models.*;
+import validators.Validator; // nếu Validator nằm trong thư mục validators
+
 import java.io.*;
-import java.lang.classfile.ClassModel;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
-import interfaces.ILists;
-import models.RegularStudentModel;
-import models.ScoreModel;
-import models.SpecializedStudentModel;
-import models.StudentModel;
-import models.ClassroomModel;
-
-import java.io.BufferedReader;
 
 public class StudentList implements ILists {
     private ArrayList<StudentModel> studentList;
     private Scanner sc = new Scanner(System.in);
     private String titleHeader = "Id | Name | Address | ClassId | ClassName | TeacherId | Math | Literature | English | Conduct | majorSubject | majorScore";
 
+    private static int totalStudents = 0; // static counter
+
+    // Thêm static getter
+    public static int getTotalStudents() {
+        return totalStudents;
+    }
+    public static void setTotalStudents(int total) {
+        totalStudents = total;
+    }
+
+
     public StudentList() {
         studentList = new ArrayList<>();
+        readFile();
     }
 
     // ========================= ADD ============================
@@ -32,37 +41,36 @@ public class StudentList implements ILists {
             String id;
 
             while (true) {
-                System.out.print("Nhap ID can them: ");
+                System.out.print("Enter ID to add: ");
                 id = sc.nextLine().trim();
 
                 if (id.isEmpty()) {
-                    System.out.println("ID không được để trống. Vui lòng nhập lại!");
+                    System.out.println("ID cannot be empty. Please enter again!");
                     continue;
                 }
 
                 if (searchById(id) != -1) {
-                    System.out.println("Id da ton tai vui long nhap lai id!");
+                    System.out.println("ID already exists. Please enter again!");
                     continue;
                 }
 
-                if (!Pattern.matches("^[A-Za-z0-9]{2,10}$", id)) {
-                    System.out.println("ID khong hop le (chi chua chu va so, tu 2-10 ky tu).");
+                if (!Validator.isValidId(id)) {
+                    System.out.println("Invalid ID (only letters and numbers, 2-10 characters).");
                     continue;
                 }
                 break;
 
             }
 
-
             int option;
 
             while (true) {
 
-                System.out.println("1. Them hoc sinh thuong");
-                System.out.println("2. Them hoc sinh chuyen");
-                System.out.print("Chon loai: ");
+                System.out.println("1. Add regular student");
+                System.out.println("2. Add specialized student");
+                System.out.print("Choose type: ");
                 if (!sc.hasNextInt()) {
-                    System.out.println("Lua chon phai la so!");
+                    System.out.println("Choice must be a number!");
 
                     sc.nextLine();
 
@@ -71,31 +79,30 @@ public class StudentList implements ILists {
                 }
                 option = sc.nextInt();
                 sc.nextLine();
-                if (option == 1 || option == 2) break;
-                System.out.println("Lua chon khong hop le!");
+                if (option == 1 || option == 2)
+                    break;
+                System.out.println("Invalid choice!");
             }
-
 
             String fullName;
             while (true) {
 
-                System.out.print("Nhap ho ten: ");
+                System.out.print("Enter full name: ");
                 fullName = sc.nextLine().trim();
-                if (!Pattern.matches("^[A-Za-z\\s]{3,50}$", fullName)) {
-                    System.out.println("Ho ten khong hop le (chi chu cai, toi da 50 ky tu).");
+                if (!Validator.isValidName(fullName)) {
+                    System.out.println("Invalid name (letters only, up to 50 characters).");
                     continue;
                 }
                 break;
             }
 
-
             String address;
 
             while (true) {
-                System.out.print("Nhap dia chi: ");
+                System.out.print("Enter address: ");
                 address = sc.nextLine().trim();
                 if (address.length() < 3) {
-                    System.out.println("Dia chi phai tu 3 ky tu tro len.");
+                    System.out.println("Address must be at least 3 characters.");
                     continue;
                 }
                 break;
@@ -103,41 +110,87 @@ public class StudentList implements ILists {
 
             ScoreModel score;
             while (true) {
+                double math, literature, english;
 
-                System.out.println("Nhap diem toan:(0 <= D <= 10) ");
-                double math = sc.nextDouble();
-//
+                while (true) {
+                    System.out.println("Enter Math score: (0 <= score <= 10)");
+                    math = sc.nextDouble();
+                    if (!Validator.isValidScore(math)) {
+                        System.out.println("Invalid Math score! Must be 0-10.");
+                        continue;
+                    }
+                    break;
+                }
 
-                System.out.println("Nhap diem ngu van :(0 <= D <= 10) ");
-                double literature = sc.nextDouble();
-//
+                while (true) {
+                    System.out.println("Enter Literature score: (0 <= score <= 10)");
+                    literature = sc.nextDouble();
+                    if (!Validator.isValidScore(literature)) {
+                        System.out.println("Invalid Literature score! Must be 0-10.");
+                        continue;
+                    }
+                    break;
+                }
 
-                System.out.println("Nhap diem anh van :(0 <= D <= 10) ");
-                double english = sc.nextDouble();
-//
+                while (true) {
+                    System.out.println("Enter English score: (0 <= score <= 10)");
+                    english = sc.nextDouble();
+                    if (!Validator.isValidScore(english)) {
+                        System.out.println("Invalid English score! Must be 0-10.");
+                        continue;
+                    }
+                    break;
+                }
+
                 sc.nextLine();
                 score = new ScoreModel(math, literature, english);
                 break;
             }
-//
+
             ClassroomModel classModel;
-//            while (true) {
-                System.out.println("Nhap id lop: ");
-                String classId = sc.nextLine();
-                System.out.println("Nhap ten lop: ");
-                String className = sc.nextLine();
-                System.out.println("Nhap ten giao vien chu nhiem: ");
-                String teacherId = sc.nextLine();
-                classModel = new ClassroomModel(classId, className, teacherId);
-//            }
+
+            String classId;
+            while (true) {
+                System.out.println("Enter class ID: ");
+                classId = sc.nextLine().trim();
+                if (!Validator.isValidId(classId)) {
+                    System.out.println("Invalid class ID! Only letters/numbers, 2-10 chars.");
+                    continue;
+                }
+                break;
+            }
+
+            String className;
+            while (true) {
+                System.out.println("Enter class name: ");
+                className = sc.nextLine().trim();
+                if (!Validator.isValidName(className)) {
+                    System.out.println("Invalid class name! Only letters and spaces, 3-50 chars.");
+                    continue;
+                }
+                break;
+            }
+
+            String teacherId;
+            while (true) {
+                System.out.println("Enter homeroom teacher name: ");
+                teacherId = sc.nextLine().trim();
+                if (!Validator.isValidName(teacherId)) {
+                    System.out.println("Invalid teacher name! Only letters and spaces, 3-50 chars.");
+                    continue;
+                }
+                break;
+            }
+
+            classModel = new ClassroomModel(classId, className, teacherId);
 
             if (option == 1) {
                 String conduct;
                 while (true) {
-                    System.out.print("Nhap hanh kiem: ");
+                    System.out.print("Enter conduct: ");
                     conduct = sc.nextLine().trim();
-                    if (!Pattern.matches("^[A-Za-z\\s]{3,20}$", conduct)) {
-                        System.out.println("Hanh kiem khong hop le (chi chu cai, toi da 20 ky tu).");
+                    if (!Validator.isValidConduct(conduct)) {
+                        System.out.println("Invalid conduct (letters only, up to 20 characters).");
                         continue;
                     }
                     break;
@@ -145,46 +198,48 @@ public class StudentList implements ILists {
                 StudentModel temp = new RegularStudentModel(id, fullName, address, classModel, score, conduct);
                 studentList.add(temp);
                 writeFile();
-                System.out.println("Them hoc sinh thuong thanh cong!");
+                System.out.println("Regular student added successfully!");
                 return;
             } else {
                 String majorSubject;
                 while (true) {
-                    System.out.print("Nhap mon chuyen: ");
+                    System.out.print("Enter specialized subject: ");
                     majorSubject = sc.nextLine().trim();
-                    if (!Pattern.matches("^[A-Za-z\\s]{2,30}$", majorSubject)) {
-                        System.out.println("Mon chuyen khong hop le (chi chu cai, toi da 30 ky tu).");
+                    if (!Validator.isValidName(majorSubject)) {
+                        System.out.println("Invalid specialized subject (letters only, up to 30 characters).");
                         continue;
                     }
                     break;
                 }
                 double majorScore;
                 while (true) {
-                    System.out.print("Nhap diem mon chuyen: ");
+                    System.out.print("Enter major score: ");
                     if (!sc.hasNextDouble()) {
-                        System.out.println("Diem phai la so!");
+                        System.out.println("Score must be a number!");
                         sc.nextLine();
                         continue;
                     }
                     majorScore = sc.nextDouble();
                     sc.nextLine();
                     if (majorScore < 0 || majorScore > 10) {
-                        System.out.println("Diem phai tu 0 den 10!");
+                        System.out.println("Score must be between 0 and 10!");
                         continue;
                     }
                     break;
                 }
-                StudentModel temp = new SpecializedStudentModel(id, fullName, address, classModel, score, majorSubject, majorScore);
+                StudentModel temp = new SpecializedStudentModel(id, fullName, address, classModel, score, majorSubject,
+                        majorScore);
                 studentList.add(temp);
+                totalStudents++;
                 writeFile();
-                System.out.println("Them hoc sinh chuyen thanh cong!");
+                System.out.println("Specialized student added successfully!");
                 return;
 
             }
 
         }
-    }
 
+    }
 
     // ========================= UPDATE ============================
 
@@ -192,153 +247,310 @@ public class StudentList implements ILists {
 
     public void update() {
         while (true) {
-            System.out.print("Nhap ID can sua: ");
+            System.out.print("Enter ID to update: ");
             String id = sc.nextLine();
             int index = searchById(id);
 
             if (index == -1) {
-                System.out.println("Khong tim thay hoc sinh!");
+                System.out.println("Student not found!");
                 continue;
             }
-
 
             StudentModel s = studentList.get(index);
 
             if (s instanceof RegularStudentModel) {
-                System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Hanh kiem");
-                System.out.print("Chon muc can sua: ");
+                System.out.println(
+                        "1. Name  2. Address  3. Class Name  4. Teacher  5. Math  6. Literature  7. English  8. Conduct");
+                System.out.print("Select field to update: ");
                 int opt = sc.nextInt();
                 sc.nextLine();
 
-
                 switch (opt) {
-                    case 1: {
-                        System.out.print("Nhap ten moi: ");
-                        s.setFullName(sc.nextLine().trim());
+                    case 1: { // Name
+                        String newName;
+                        while (true) {
+                            System.out.print("Enter new name: ");
+                            newName = sc.nextLine().trim();
+                            if (!Validator.isValidName(newName)) {
+                                System.out.println("Invalid name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.setFullName(newName);
                         break;
                     }
 
-                    case 2: {
-                        System.out.print("Nhap dia chi moi: ");
-                        s.setAddress(sc.nextLine().trim());
+                    case 2: { // Address
+                        String newAddress;
+                        while (true) {
+                            System.out.print("Enter new address: ");
+                            newAddress = sc.nextLine().trim();
+                            if (!Validator.isValidAddress(newAddress)) {
+                                System.out.println("Invalid address! Must be at least 3 characters.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.setAddress(newAddress);
                         break;
                     }
 
-                    case 3: {
-                        System.out.println("Nhap ten lop: ");
-                        s.getClassroomModel().setClassName(sc.nextLine().trim());
+                    case 3: { // Class name
+                        String newClassName;
+                        while (true) {
+                            System.out.print("Enter class name: ");
+                            newClassName = sc.nextLine().trim();
+                            if (!Validator.isValidName(newClassName)) {
+                                System.out.println("Invalid class name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getClassroomModel().setClassName(newClassName);
                         break;
                     }
 
-                    case 4: {
-                        System.out.print("Nhap giao vien moi: ");
-                        s.getClassroomModel().setTeacherId(sc.nextLine().trim());
+                    case 4: { // Teacher name
+                        String newTeacher;
+                        while (true) {
+                            System.out.print("Enter new teacher: ");
+                            newTeacher = sc.nextLine().trim();
+                            if (!Validator.isValidName(newTeacher)) {
+                                System.out.println("Invalid teacher name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getClassroomModel().setTeacherId(newTeacher);
                         break;
                     }
 
-                    case 5: {
-                        System.out.print("Nhap diem mon toan moi: ");
-                        s.getScore().setMath(sc.nextDouble());
+                    case 5: { // Math
+                        double newMath;
+                        while (true) {
+                            System.out.print("Enter new Math score: ");
+                            newMath = sc.nextDouble();
+                            if (!Validator.isValidScore(newMath)) {
+                                System.out.println("Invalid Math score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setMath(newMath);
+                        sc.nextLine(); // consume newline
                         break;
                     }
 
-                    case 6: {
-                        System.out.print("Nhap diem mon ngu van moi: ");
-                        s.getScore().setLiterature(sc.nextDouble());
+                    case 6: { // Literature
+                        double newLiterature;
+                        while (true) {
+                            System.out.print("Enter new Literature score: ");
+                            newLiterature = sc.nextDouble();
+                            if (!Validator.isValidScore(newLiterature)) {
+                                System.out.println("Invalid Literature score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setLiterature(newLiterature);
+                        sc.nextLine();
                         break;
                     }
 
-                    case 7: {
-                        System.out.print("Nhap diem mon tieng anh moi: ");
-                        s.getScore().setEnglish(sc.nextDouble());
+                    case 7: { // English
+                        double newEnglish;
+                        while (true) {
+                            System.out.print("Enter new English score: ");
+                            newEnglish = sc.nextDouble();
+                            if (!Validator.isValidScore(newEnglish)) {
+                                System.out.println("Invalid English score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setEnglish(newEnglish);
+                        sc.nextLine();
                         break;
                     }
 
-                    case 8: {
-                        System.out.print("Nhap hanh kiem moi: ");
-                        ((RegularStudentModel) s).setConduct(sc.nextLine().trim());
+                    case 8: { // Conduct
+                        String newConduct;
+                        while (true) {
+                            System.out.print("Enter new conduct: ");
+                            newConduct = sc.nextLine().trim();
+                            if (!Validator.isValidConduct(newConduct)) {
+                                System.out.println("Invalid conduct! Letters only, 3-20 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        ((RegularStudentModel) s).setConduct(newConduct);
                         break;
                     }
-//                ....
-
 
                     default: {
-                        System.out.println("Lua chon khong hop le!");
+                        System.out.println("Invalid choice!");
                         return;
                     }
                 }
 
             } else if (s instanceof SpecializedStudentModel) {
-                System.out.println("1. Ten  2. Dia chi  3. Ten lop  4. Giao vien  5. Toan  6. Ngu Van  7. Anh Van 8. Mon chuyen  9. Diem mon chuyen");
-                System.out.print("Chon muc can sua: ");
+                System.out.println(
+                        "1. Name  2. Address  3. Class Name  4. Teacher  5. Math  6. Literature  7. English  8. Specialized Subject  9. Major Score");
+                System.out.print("Select field to update: ");
                 int opt = sc.nextInt();
                 sc.nextLine();
                 switch (opt) {
-                    case 1: {
-                        System.out.print("Nhap ten moi: ");
-                        s.setFullName(sc.nextLine().trim());
+                    case 1: { // Name
+                        String newName;
+                        while (true) {
+                            System.out.print("Enter new name: ");
+                            newName = sc.nextLine().trim();
+                            if (!Validator.isValidName(newName)) {
+                                System.out.println("Invalid name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.setFullName(newName);
                         break;
                     }
 
-                    case 2: {
-                        System.out.print("Nhap dia chi moi: ");
-                        s.setAddress(sc.nextLine().trim());
+                    case 2: { // Address
+                        String newAddress;
+                        while (true) {
+                            System.out.print("Enter new address: ");
+                            newAddress = sc.nextLine().trim();
+                            if (!Validator.isValidAddress(newAddress)) {
+                                System.out.println("Invalid address! Must be at least 3 characters.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.setAddress(newAddress);
                         break;
                     }
 
-                    case 3: {
-                        System.out.println("Nhap ten lop: ");
-                        s.getClassroomModel().setClassName(sc.nextLine().trim());
+                    case 3: { // Class name
+                        String newClassName;
+                        while (true) {
+                            System.out.print("Enter class name: ");
+                            newClassName = sc.nextLine().trim();
+                            if (!Validator.isValidName(newClassName)) {
+                                System.out.println("Invalid class name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getClassroomModel().setClassName(newClassName);
                         break;
                     }
 
-                    case 4: {
-                        System.out.print("Nhap giao vien moi: ");
-                        s.getClassroomModel().setTeacherId(sc.nextLine().trim());
+                    case 4: { // Teacher name
+                        String newTeacher;
+                        while (true) {
+                            System.out.print("Enter new teacher: ");
+                            newTeacher = sc.nextLine().trim();
+                            if (!Validator.isValidName(newTeacher)) {
+                                System.out.println("Invalid teacher name! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getClassroomModel().setTeacherId(newTeacher);
                         break;
                     }
 
-                    case 5: {
-                        System.out.print("Nhap diem mon toan moi: ");
-                        s.getScore().setMath(sc.nextDouble());
+                    case 5: { // Math
+                        double newMath;
+                        while (true) {
+                            System.out.print("Enter new Math score: ");
+                            newMath = sc.nextDouble();
+                            if (!Validator.isValidScore(newMath)) {
+                                System.out.println("Invalid Math score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setMath(newMath);
+                        sc.nextLine(); // consume newline
                         break;
                     }
 
-                    case 6: {
-                        System.out.print("Nhap diem mon ngu van moi: ");
-                        s.getScore().setLiterature(sc.nextDouble());
+                    case 6: { // Literature
+                        double newLiterature;
+                        while (true) {
+                            System.out.print("Enter new Literature score: ");
+                            newLiterature = sc.nextDouble();
+                            if (!Validator.isValidScore(newLiterature)) {
+                                System.out.println("Invalid Literature score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setLiterature(newLiterature);
+                        sc.nextLine();
                         break;
                     }
 
-                    case 7: {
-                        System.out.print("Nhap diem mon tieng anh moi: ");
-                        s.getScore().setEnglish(sc.nextDouble());
+                    case 7: { // English
+                        double newEnglish;
+                        while (true) {
+                            System.out.print("Enter new English score: ");
+                            newEnglish = sc.nextDouble();
+                            if (!Validator.isValidScore(newEnglish)) {
+                                System.out.println("Invalid English score! Must be 0-10.");
+                                continue;
+                            }
+                            break;
+                        }
+                        s.getScore().setEnglish(newEnglish);
+                        sc.nextLine();
                         break;
                     }
 
-                    case 8: {
-                        System.out.print("Nhap mon chuyen: ");
-                        ((SpecializedStudentModel) s).setMajorSubject(sc.nextLine().trim());
+                    case 8: { // Conduct
+                        String newConduct;
+                        while (true) {
+                            System.out.print("Enter new conduct: ");
+                            newConduct = sc.nextLine().trim();
+                            if (!Validator.isValidConduct(newConduct)) {
+                                System.out.println("Invalid conduct! Letters only, 3-20 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        ((RegularStudentModel) s).setConduct(newConduct);
                         break;
                     }
 
                     case 9: {
-                        System.out.print("Nhap diem mon chuyen: ");
-                        ((SpecializedStudentModel) s).setMajorScore(sc.nextDouble());
+                        String newMajorSubject;
+                        while (true) {
+                            System.out.print("Enter major subject: ");
+                            newMajorSubject = sc.nextLine().trim();
+                            if (!Validator.isValidName(newMajorSubject)) {
+                                System.out.println("Invalid major subject! Only letters and spaces, 3-50 chars.");
+                                continue;
+                            }
+                            break;
+                        }
+                        ((SpecializedStudentModel) s).setMajorSubject(newMajorSubject);
                         break;
                     }
 
-//                ....
                     default: {
-                        System.out.println("Lua chon khong hop le!");
+                        System.out.println("Invalid choice!");
                         return;
                     }
                 }
             }
-            System.out.println("Cap nhat thanh cong!");
+            System.out.println("Update successful!");
             this.writeFile();
             return;
         }
+
     }
 
     // ========================= REMOVE ============================
@@ -346,50 +558,49 @@ public class StudentList implements ILists {
     @Override
     public void remove() {
         while (true) {
-            System.out.print("Nhap ID can xoa: ");
+            System.out.print("Enter ID to remove: ");
             String id = sc.nextLine();
             int index = searchById(id);
 
             if (index == -1) {
-                System.out.println("Khong tim thay hoc sinh!");
+                System.out.println("Student not found!");
                 continue;
             }
 
-
-            System.out.print("Xac nhan xoa (1: Co / 2: Khong): ");
+            System.out.print("Confirm delete (1: Yes / 2: No): ");
             int confirm = sc.nextInt();
             sc.nextLine();
 
             if (confirm == 1) {
                 studentList.remove(index);
-                System.out.println("Da xoa hoc sinh!");
+                totalStudents--;
+
+                System.out.println("Student removed!");
                 this.readFile();
                 return;
 
             } else {
-                System.out.println("Huy thao tac xoa.");
+                System.out.println("Delete cancelled.");
                 return;
             }
         }
 
     }
 
-
     // ========================= SEARCH ============================
 
     @Override
-
     public void search() {
         while (true) {
-            System.out.print("Nhap ID can tim: ");
+            System.out.print("Enter ID to search: ");
             String id = sc.nextLine();
             int index = searchById(id);
 
             if (index == -1) {
-                System.out.println("Khong tim thay hoc sinh!");
+                System.out.println("Student not found!");
                 continue;
             } else {
-                System.out.println("Ket qua:");
+                System.out.println("Result:");
                 studentList.get(index).display();
                 return;
             }
@@ -397,16 +608,15 @@ public class StudentList implements ILists {
 
     }
 
-
     // ========================= PRINT LIST ============================
 
     @Override
     public void println() {
         if (studentList.isEmpty()) {
-            System.out.println("Danh sach rong!");
+            System.out.println("The list is empty!");
             return;
         } else {
-            System.out.println("Danh sach hoc sinh:");
+            System.out.println("Student list:");
             System.out.println(titleHeader);
             for (StudentModel s : studentList) {
                 s.display();
@@ -416,11 +626,9 @@ public class StudentList implements ILists {
 
     }
 
-
     // ========================= SEARCH BY ID ============================
 
     @Override
-
     public int searchById(String id) {
         if (studentList.size() == 0) {
             return -1;
@@ -439,84 +647,89 @@ public class StudentList implements ILists {
         return index == -1 ? null : studentList.get(index);
     }
 
-
     @Override
     public void readFile() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("txt/students.txt"));
             String line;
             studentList.clear();
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
+
                 String id = parts[0].trim();
-                String name = parts[1];
-                String address = parts[2];
-                String classId = parts[3];
-                String className = parts[4];
-                String teacherId = parts[5];
-                double math = Double.parseDouble(parts[6]);
-                double literature = Double.parseDouble(parts[7]);
-                double english = Double.parseDouble(parts[8]);
-                StudentModel temp = null;
+                String name = parts[1].trim();
+                String address = parts[2].trim();
+                String classId = parts[3].trim();
+                String className = parts[4].trim();
+                String teacherId = parts[5].trim();
+
+                double math = Double.parseDouble(parts[6].trim());
+                double literature = Double.parseDouble(parts[7].trim());
+                double english = Double.parseDouble(parts[8].trim());
+
                 ClassroomModel tempClassroom = new ClassroomModel(classId, className, teacherId);
                 ScoreModel tempScoreModel = new ScoreModel(math, literature, english);
-                if (parts[9].equals("null")) {
-                    String majorSubject = parts[10];
-                    double majorScore = Double.parseDouble(parts[11]);
-                    temp = new SpecializedStudentModel(id, name, address, tempClassroom, tempScoreModel, majorSubject, majorScore);
-                    studentList.add(temp);
-                } else {
-                    String conduct = parts[9];
+
+                String conduct = parts[9].trim();
+
+                StudentModel temp = null;
+
+                // ========================= PHÂN LOẠI ĐÚNG =========================
+                if (!conduct.equals("null")) {
+
+                    // ---- HỌC SINH THƯỜNG ----
                     temp = new RegularStudentModel(id, name, address, tempClassroom, tempScoreModel, conduct);
-                    studentList.add(temp);
+
+                } else {
+
+                    // ---- HỌC SINH CHUYÊN ----
+                    String majorSubject = parts[10].trim();
+                    double majorScore = Double.parseDouble(parts[11].trim());
+
+                    temp = new SpecializedStudentModel(id, name, address, tempClassroom, tempScoreModel,
+                            majorSubject, majorScore);
                 }
+
+                studentList.add(temp);
             }
+
             reader.close();
-            System.out.println("✅ Đọc file thành công! Số học sinh: " + studentList.size());
-        } catch (FileNotFoundException e) {
-            System.out.println("File không tồn tại!");
-        } catch (IOException e) {
+            System.out.println("Đọc file thành công!");
+
+        } catch (Exception e) {
             System.out.println("Lỗi đọc file: " + e.getMessage());
         }
+        totalStudents = studentList.size();
     }
 
-
     @Override
-    public void writeFile() {// truyen vao 1 phan tu sinh vien
+    public void writeFile() {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("txt/students.txt", false)); // false = ghi đè
+            BufferedWriter writer = new BufferedWriter(new FileWriter("txt/students.txt", false));
             for (int i = 0; i < studentList.size(); i++) {
-                writer.write(studentList.get(i).toString());// sinh vien. tostring
-                writer.newLine(); // xuống dòng
+                writer.write(studentList.get(i).toString());
+                writer.newLine();
             }
 
             writer.close();
-            System.out.println("✅ Ghi file thành công!");
+            System.out.println("✅ File written successfully!");
         } catch (IOException e) {
-            System.out.println("❌ Lỗi ghi file: " + e.getMessage());
+            System.out.println("❌ Error writing file: " + e.getMessage());
         }
     }
-
 
     // ========================= MAIN TEST ============================
 
     public static void main(String[] args) {
+        System.out.println("Total students: " + StudentList.getTotalStudents());
+
         StudentList list = new StudentList();
         list.readFile();
-//        list.add();
-//
-//        list.readFile();
         list.println();
         list.add();
         list.update();
-//        list.println();
-//        list.search();
-//        list.remove();
-//        list.println();
-//        list.readFile();
         list.println();
-
-
     }
 
 }
